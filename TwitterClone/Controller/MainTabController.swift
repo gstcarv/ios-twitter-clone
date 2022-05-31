@@ -23,21 +23,37 @@ class MainTabController: UITabBarController {
     
     func configureViewControllers() {
         let feed = FeedController()
-        feed.tabBarItem.image = UIImage(systemName: "house")
-        feed.tabBarItem.selectedImage = UIImage(systemName: "house.fill")
+        let feedNavigationController = templateNavigationController(rootViewController: feed, image: UIImage(systemName: "house"), selectedImage: UIImage(systemName: "house.fill"))
         
         let explore = ExploreController()
-        explore.tabBarItem.image = UIImage(systemName: "magnifyingglass")
+        let exploreNavigationController = templateNavigationController(rootViewController: explore, image: UIImage(systemName: "magnifyingglass"), selectedImage: UIImage(systemName: "magnifyingglass"))
         
         let notifications = NotificationsController()
-        notifications.tabBarItem.image = UIImage(systemName: "heart")
-        notifications.tabBarItem.selectedImage = UIImage(systemName: "heart.fill")
+        let notificationNavigationController = templateNavigationController(rootViewController: notifications, image: UIImage(systemName: "heart"), selectedImage: UIImage(systemName: "heart.fill"))
         
         let conversations = ConversationsController()
-        conversations.tabBarItem.image = UIImage(systemName: "envelope")
-        conversations.tabBarItem.selectedImage = UIImage(systemName: "envelope.fill")
+        let conversationsNavigationController = templateNavigationController(rootViewController: conversations, image: UIImage(systemName: "envelope"), selectedImage: UIImage(systemName: "envelope.fill"))
         
-        viewControllers = [feed, explore, notifications, conversations]
+        viewControllers = [feedNavigationController, exploreNavigationController, notificationNavigationController, conversationsNavigationController]
+        
+        tabBar.isTranslucent = false
+        tabBar.backgroundColor = .white
+    }
+    
+    func templateNavigationController(rootViewController: UIViewController, image: UIImage?, selectedImage: UIImage?) -> UINavigationController {
+        let navigationController = UINavigationController(rootViewController: rootViewController)
+        
+        let appearance = UINavigationBarAppearance();
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .white
+        
+        navigationController.navigationBar.standardAppearance = appearance;
+        navigationController.navigationBar.scrollEdgeAppearance = appearance;
+        
+        navigationController.tabBarItem.image = image
+        navigationController.tabBarItem.selectedImage = selectedImage
+        
+        return navigationController;
     }
     
 }
