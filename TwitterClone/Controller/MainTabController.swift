@@ -10,16 +10,44 @@ import UIKit
 class MainTabController: UITabBarController {
 
     // MARK: - Properties
+    let actionButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.backgroundColor = UIColor(named: "AccentColor")
+        button.setImage(UIImage(named: "new_tweet"), for: .normal)
+        button.tintColor = .white
+        button.layer.cornerRadius = 56 / 2
+        button.addTarget(self, action: #selector(handleFABPress), for: .touchUpInside)
+        return button
+    }()
     
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        configureUI()
         configureViewControllers()
     }
     
+    // MARK: - Selectors
+    @objc func handleFABPress () {
+        let alert = UIAlertController(title: "The button was pressed", message: "And i'm a testing alert :D", preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        
+        present(alert, animated: true, completion: nil)
+    }
+    
     // MARK: - Helpers
+    
+    func configureUI() {
+        view.addSubview(actionButton)
+        
+        actionButton.translatesAutoresizingMaskIntoConstraints = false
+        actionButton.widthAnchor.constraint(equalToConstant: 56).isActive = true
+        actionButton.heightAnchor.constraint(equalToConstant: 56).isActive = true
+        actionButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -64).isActive = true
+        actionButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -17).isActive = true
+    }
     
     func configureViewControllers() {
         let feed = FeedController()
