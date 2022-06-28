@@ -11,6 +11,9 @@ import UIKit
 class RegistrationController: UIViewController {
     
     // MARK: - Properties
+    
+    let imagePicker = UIImagePickerController()
+    
     private let alreadyHaveAccountButton: UIButton = {
         let button = Utilities().attributedButton("Already have an account?", " Sign In")
         button.addTarget(self, action: #selector(handleGotoLogin), for: .touchUpInside)
@@ -22,6 +25,10 @@ class RegistrationController: UIViewController {
         button.setImage(UIImage(named: "plus_photo"), for: .normal)
         button.tintColor = .white
         button.addTarget(self, action: #selector(handleSelectPhoto), for: .touchUpInside)
+        button.layer.cornerRadius = 150 / 2
+        button.layer.masksToBounds = true
+        button.imageView?.contentMode = .scaleAspectFill
+        button.imageView?.clipsToBounds = true
         return button
     }()
     
@@ -65,7 +72,7 @@ class RegistrationController: UIViewController {
     }()
     
     private let usernameTextField: UITextField = {
-        let tf = Utilities().textField(withPlaceholder: "Email")
+        let tf = Utilities().textField(withPlaceholder: "Username")
         return tf
     }()
     
@@ -93,7 +100,7 @@ class RegistrationController: UIViewController {
     }
     
     @objc func handleSelectPhoto() {
-        print("hello world")
+        present(imagePicker, animated: true, completion: nil)
     }
     
     @objc func handleRegistration() {
@@ -102,6 +109,10 @@ class RegistrationController: UIViewController {
     
     // MARK: - Helpers
     func configureUI() {
+        
+        imagePicker.delegate = self
+        imagePicker.allowsEditing = true
+        
         view.backgroundColor = UIColor(named: "AccentColor")
         view.addSubview(alreadyHaveAccountButton)
         
@@ -117,7 +128,9 @@ class RegistrationController: UIViewController {
         
         NSLayoutConstraint.activate([
             plusPhotoSelector.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-            plusPhotoSelector.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            plusPhotoSelector.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            plusPhotoSelector.heightAnchor.constraint(equalToConstant: 150),
+            plusPhotoSelector.widthAnchor.constraint(equalToConstant: 150),
         ])
         
         let registerFormStack = UIStackView(arrangedSubviews: [emailContainerView, passwordContainerView, fullnameContainerView, usernameContainerView])
@@ -146,4 +159,19 @@ class RegistrationController: UIViewController {
         ])
     }
     
+}
+
+// MARK: - UIImagePickerControllerDelegate
+
+extension RegistrationController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        guard let profileImage = info[.editedImage] as? UIImage else { return }
+        
+        plusPhotoSelector.layer.borderColor = UIColor.white.cgColor
+        plusPhotoSelector.layer.borderWidth = 2
+        
+        self.plusPhotoSelector.setImage(profileImage.withRenderingMode(.alwaysOriginal), for: .normal)
+        
+        dismiss(animated: true, completion: nil)
+    }
 }
