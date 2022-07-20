@@ -7,12 +7,17 @@
 
 import Foundation
 import UIKit
+import FirebaseAuth
+import FirebaseFirestore
+import FirebaseStorage
 
 class RegistrationController: UIViewController {
     
     // MARK: - Properties
     
     let imagePicker = UIImagePickerController()
+    
+    private var profileImage: UIImage?
     
     private let alreadyHaveAccountButton: UIButton = {
         let button = Utilities().attributedButton("Already have an account?", " Sign In")
@@ -104,7 +109,65 @@ class RegistrationController: UIViewController {
     }
     
     @objc func handleRegistration() {
+        guard let profileImage = profileImage else {
+            return ErrorHandler.handleError(self, err: nil, message: "Select the profile image")
+        }
         
+        guard let email = emailTextField.text else { return }
+        guard let password = passwordTextField.text else { return }
+        guard let username = usernameTextField.text else { return }
+        guard let fullname = fullnameTextField.text else { return }
+        
+        guard let imageData = profileImage.jpegData(compressionQuality: 0.3) else { return }
+        
+        let profileImageStorageRef = FIRProfileImagesStorage.child(UUID().uuidString);
+        
+        // Uploads the user profile image
+        profileImageStorageRef.putData(imageData, metadata: nil) { (meta, error) in
+            
+            // Try to get the profile image url
+            profileImageStorageRef.downloadURL { url, error in
+                
+                if let error = error {
+                    return ErrorHandler.handleError(self, err: error, message: error.localizedDescription)
+                }
+                
+                guard let profileImageUrl = url?.absoluteString else { return }
+                
+                // Register user on Firebase Authentication
+                Auth.auth().createUser(withEmail: email, password: password) { result, error in
+                    if let error = error {
+                        return ErrorHandler.handleError(self, err: error, message: error.localizedDescription)
+                    }
+                    
+                    guard let uid = result?.user.uid else { return }
+                    
+                    let userInformation = [
+                        "email": email,
+                        "password": password,
+                        "username": username,
+                        "fullname": fullname,
+                        "profileImageUrl": profileImageUrl
+                    ]
+                    
+                    // Save user information on the database
+                    FIRUsers.document(uid).setData(userInformation) { error in
+                        if let error = error {
+                            return ErrorHandler.handleError(self, err: error, message: error.localizedDescription)
+                        }
+                         
+                        let successAlert = UIAlertController.init(title: "Account created", message: "Your account was created successfully", preferredStyle: .alert)
+                        
+                        successAlert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: .none))
+                        
+                        self.present(successAlert, animated: true) {
+                            self.navigationController?.popViewController(animated: true)
+                        }
+                    }
+                }
+            }
+        }
+    
     }
     
     // MARK: - Helpers
@@ -166,6 +229,8 @@ class RegistrationController: UIViewController {
 extension RegistrationController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         guard let profileImage = info[.editedImage] as? UIImage else { return }
+        
+        self.profileImage = profileImage;
         
         plusPhotoSelector.layer.borderColor = UIColor.white.cgColor
         plusPhotoSelector.layer.borderWidth = 2
