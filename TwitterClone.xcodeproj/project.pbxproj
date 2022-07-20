@@ -24,6 +24,7 @@
 		B7A6B2D228346C0E00FEB658 /* ExploreController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A6B2D128346C0E00FEB658 /* ExploreController.swift */; };
 		B7A6B2D428346C2000FEB658 /* ConversationsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A6B2D328346C2000FEB658 /* ConversationsController.swift */; };
 		B7F99FC228888AC0001B43FB /* FirebaseConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7F99FC128888AC0001B43FB /* FirebaseConstants.swift */; };
+		B7F99FC42888937E001B43FB /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7F99FC32888937E001B43FB /* AuthService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +49,7 @@
 		B7A6B2D128346C0E00FEB658 /* ExploreController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreController.swift; sourceTree = "<group>"; };
 		B7A6B2D328346C2000FEB658 /* ConversationsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationsController.swift; sourceTree = "<group>"; };
 		B7F99FC128888AC0001B43FB /* FirebaseConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseConstants.swift; sourceTree = "<group>"; };
+		B7F99FC32888937E001B43FB /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -152,6 +154,7 @@
 		B7A6B2C9283459CC00FEB658 /* API */ = {
 			isa = PBXGroup;
 			children = (
+				B7F99FC32888937E001B43FB /* AuthService.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -299,6 +302,7 @@
 				B7A6B2B3283458E100FEB658 /* SceneDelegate.swift in Sources */,
 				B7355F2A286E7AFD00259043 /* ErrorHandler.swift in Sources */,
 				B7A6B2D028346C0000FEB658 /* NotificationsController.swift in Sources */,
+				B7F99FC42888937E001B43FB /* AuthService.swift in Sources */,
 				B7A6B2CB28345A0D00FEB658 /* MainTabController.swift in Sources */,
 				B73BC9E52851743800BE5BF0 /* LoginController.swift in Sources */,
 				B7A6B2CE28346BE700FEB658 /* FeedController.swift in Sources */,

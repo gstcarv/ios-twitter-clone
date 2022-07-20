@@ -7,9 +7,6 @@
 
 import Foundation
 import UIKit
-import FirebaseAuth
-import FirebaseFirestore
-import FirebaseStorage
 
 class RegistrationController: UIViewController {
     
@@ -118,56 +115,22 @@ class RegistrationController: UIViewController {
         guard let username = usernameTextField.text else { return }
         guard let fullname = fullnameTextField.text else { return }
         
-        guard let imageData = profileImage.jpegData(compressionQuality: 0.3) else { return }
-        
-        let profileImageStorageRef = FIRProfileImagesStorage.child(UUID().uuidString);
-        
-        // Uploads the user profile image
-        profileImageStorageRef.putData(imageData, metadata: nil) { (meta, error) in
+        AuthService.shared.registerUser(
+            credentials: AuthCredentials(email: email, password: password,
+                                         fullname: fullname, username: username, profileImage: profileImage)
+        ) { error in
+            if let error = error {
+                return ErrorHandler.handleError(self, err: error, message: error.localizedDescription)
+            }
             
-            // Try to get the profile image url
-            profileImageStorageRef.downloadURL { url, error in
-                
-                if let error = error {
-                    return ErrorHandler.handleError(self, err: error, message: error.localizedDescription)
-                }
-                
-                guard let profileImageUrl = url?.absoluteString else { return }
-                
-                // Register user on Firebase Authentication
-                Auth.auth().createUser(withEmail: email, password: password) { result, error in
-                    if let error = error {
-                        return ErrorHandler.handleError(self, err: error, message: error.localizedDescription)
-                    }
-                    
-                    guard let uid = result?.user.uid else { return }
-                    
-                    let userInformation = [
-                        "email": email,
-                        "password": password,
-                        "username": username,
-                        "fullname": fullname,
-                        "profileImageUrl": profileImageUrl
-                    ]
-                    
-                    // Save user information on the database
-                    FIRUsers.document(uid).setData(userInformation) { error in
-                        if let error = error {
-                            return ErrorHandler.handleError(self, err: error, message: error.localizedDescription)
-                        }
-                         
-                        let successAlert = UIAlertController.init(title: "Account created", message: "Your account was created successfully", preferredStyle: .alert)
-                        
-                        successAlert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: .none))
-                        
-                        self.present(successAlert, animated: true) {
-                            self.navigationController?.popViewController(animated: true)
-                        }
-                    }
-                }
+            let successAlert = UIAlertController.init(title: "Account created", message: "Your account was created successfully", preferredStyle: .alert)
+            
+            successAlert.addAction(UIAlertAction(title: "Ok", style: .cancel, handler: .none))
+            
+            self.present(successAlert, animated: true) {
+                self.navigationController?.popViewController(animated: true)
             }
         }
-    
     }
     
     // MARK: - Helpers
